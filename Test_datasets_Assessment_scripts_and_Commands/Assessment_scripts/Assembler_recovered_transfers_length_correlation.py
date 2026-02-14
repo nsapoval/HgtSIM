@@ -17,7 +17,7 @@
 
 import os
 import argparse
-from Bio import SeqIO
+from hgtsim.utils import parse_fasta
 
 parser = argparse.ArgumentParser()
 
@@ -88,7 +88,7 @@ list_lt1400 = []
 list_lt1600 = []
 list_lt1800 = []
 list_lt2000 = []
-for each in SeqIO.parse(pwd_transfers_fasta, 'fasta'):
+for each in parse_fasta(pwd_transfers_fasta):
     seq_id = each.id
     seq_length = len(each.seq)
     if 600 <=seq_length < 800:

@@ -46,10 +46,10 @@ setup(name="HgtSIM",
       keywords="Bioinformatics Metagenomics HGT simulator",
       description="a simulator for HGT in microbial communities",
       url="https://github.com/songweizhi/HgtSIM",
-      packages=find_packages(exclude=['contrib','docs']),
+      packages=['hgtsim'],
       package_data={'': ['*.r', '*.R']},
       include_package_data=True,
 
-      install_requires=['biopython'],
+      install_requires=[],
 
       scripts=['bin/HgtSIM'])

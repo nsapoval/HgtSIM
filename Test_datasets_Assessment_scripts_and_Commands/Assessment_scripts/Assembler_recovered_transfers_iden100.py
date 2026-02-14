@@ -17,10 +17,7 @@
 
 import os
 import argparse
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet import generic_dna
+from hgtsim.utils import parse_fasta, write_fasta
 
 
 def get_recovered_iden100_transfers(d, match_summary):
@@ -160,26 +157,18 @@ for each in matches_r:
     right_len_m = int(each_split[7])
     matched_list.append(query_m)
     # read in assemblies
-    for each_contig in SeqIO.parse(pwd_scaffold_file, 'fasta'):
+    for each_contig in parse_fasta(pwd_scaffold_file):
         contig_id = each_contig.id
         if contig_id == subject_m:
             #print('\n%s\t%s' % (query_m, each_contig.id))
             flank_handle = open('%s/%s_flanking.fasta' % (wd, query_m), 'w')
-            each_contig_seq = str(each_contig.seq)
+            each_contig_seq = each_contig.seq
             left_flanking_seq = each_contig_seq[left_b_m - 1:left_e_m - 1]
             right_flanking_seq = each_contig_seq[right_b_m:right_e_m]
             if len(left_flanking_seq) >= 50:
-                left_flanking_seq_object = Seq(left_flanking_seq, generic_dna)
-                left_flanking_seq_record = SeqRecord(left_flanking_seq_object)
-                left_flanking_seq_record.id = '%slflk' % query_m
-                left_flanking_seq_record.description = ''
-                SeqIO.write(left_flanking_seq_record, flank_handle, 'fasta')
+                write_fasta(flank_handle, '%slflk' % query_m, '', left_flanking_seq)
             if len(right_flanking_seq) >= 50:
-                right_flanking_seq_object = Seq(right_flanking_seq, generic_dna)
-                right_flanking_seq_record = SeqRecord(right_flanking_seq_object)
-                right_flanking_seq_record.id = '%srflk' % query_m
-                right_flanking_seq_record.description = ''
-                SeqIO.write(right_flanking_seq_record, flank_handle, 'fasta')
+                write_fasta(flank_handle, '%srflk' % query_m, '', right_flanking_seq)
 
             flank_handle.close()
             # print('left_flanking(%s):\n%s' % (len(left_flanking_seq), left_flanking_seq))

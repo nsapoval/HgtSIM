@@ -19,31 +19,18 @@ import os
 import shutil
 import random
 import argparse
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.SeqIO import FastaIO
-from Bio.Alphabet import IUPAC
-from Bio.SeqRecord import SeqRecord
-from Bio.Alphabet import generic_dna
+from hgtsim.utils import parse_fasta, read_fasta, write_fasta, reverse_complement
 
 
 def get_genome_size(fasta_file):
-    genome = SeqIO.parse(fasta_file, 'fasta')
     total_length = 0
-    for each_contig in genome:
+    for each_contig in parse_fasta(fasta_file):
         total_length += len(each_contig.seq)
     return total_length
 
 
 def export_dna_record(gene_seq, gene_id, gene_description, output_handle):
-    seq_object = Seq(gene_seq, IUPAC.unambiguous_dna)
-    seq_record = SeqRecord(seq_object)
-    seq_record.id = gene_id
-    seq_record.description = gene_description
-    fasta_out = FastaIO.FastaWriter(output_handle, wrap=None)
-    fasta_out.write_header()
-    fasta_out.write_record(seq_record)
-    fasta_out.write_footer()
+    write_fasta(output_handle, gene_id, gene_description, gene_seq, wrap=0)
 
 
 def simulate_reads(pwd_genome_file, read_number, read_length, insert_size, split, output_folder):
@@ -59,7 +46,7 @@ def simulate_reads(pwd_genome_file, read_number, read_length, insert_size, split
         output_combined = '%s/%s_R12.fasta' % (output_folder, genome_name)
         output_combined_handle = open(output_combined, 'w')
 
-    seq = str(SeqIO.read(pwd_genome_file, 'fasta').seq)
+    seq = read_fasta(pwd_genome_file).seq
     sequence_length = len(seq)
     fragment_length = 2 * read_length + insert_size
 
@@ -75,7 +62,7 @@ def simulate_reads(pwd_genome_file, read_number, read_length, insert_size, split
             current_fragment = seq_part_1_seq + seq_part_2_seq
         current_fragment_r1 = current_fragment[:read_length]
         current_fragment_r2 = current_fragment[-read_length:]
-        current_fragment_r2_reverse_complement = str(Seq(current_fragment_r2, generic_dna).reverse_complement())
+        current_fragment_r2_reverse_complement = reverse_complement(current_fragment_r2)
         current_read_r1_id = 'r%s_from_%s_%sth_bp_#0/1' % (n, genome_name, rdm_num)
         current_read_r2_id = 'r%s_from_%s_%sth_bp_#0/2' % (n, genome_name, rdm_num)
         if split == 1:
