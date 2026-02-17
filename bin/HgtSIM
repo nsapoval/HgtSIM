@@ -255,8 +255,8 @@ if __name__ == '__main__':
             report_and_log(('Please check the parameter format for argument "mixed", e.g.: 5-25'), pwd_log_file, keep_quiet)
             exit()
         else:
-            min_iden = float(mixed_mode_test_split[0])
-            max_iden = float(mixed_mode_test_split[1])
+            min_iden = int(float(mixed_mode_test_split[0]))
+            max_iden = int(float(mixed_mode_test_split[1]))
             output_folder = '%s_outputs_min%s-max%s_%s' % (output_prefix, min_iden, max_iden, ratio)
             os.makedirs(output_folder, exist_ok=True)
             pwd_log_file = '%s/%s_%s.log' % (output_folder, output_prefix, datetime.now().strftime('%Y-%m-%d_%Hh-%Mm-%Ss_%f'))
